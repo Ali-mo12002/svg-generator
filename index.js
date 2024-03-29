@@ -9,9 +9,10 @@ async function getUserInput() {
             message: 'Select a color for the logo:'
         },
         {
-            type: 'input',
+            type: 'list',
             name: 'shape',
-            message: 'Select a shape for the logo:'
+            message: 'Select a shape for the logo:',
+            choices: ['circle', 'triangle', 'square']
         },
         {
             type: 'input',
@@ -24,13 +25,29 @@ async function getUserInput() {
 }
 
 function generateSVG(color, shape, text) {
-    // Generate SVG content based on user input
-    const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
-        <rect width="100" height="100" fill="${color}" />
-        <text x="50%" y="50%" text-anchor="middle" fill="white">${text}</text>
-    </svg>`;
+    let shapeContent;
 
-    // Write SVG content to a file
+    switch (shape) {
+        case 'circle':
+            shapeContent = `<circle cx="50" cy="50" r="40" fill="${color}" />`;
+            break;
+        case 'triangle':
+            shapeContent = `<polygon points="50,10 10,90 90,90" fill="${color}" />`;
+            break;
+        case 'square':
+            shapeContent = `<rect x="10" y="10" width="80" height="80" fill="${color}" />`;
+            break;
+        default:
+            console.log('Invalid shape input. Please choose circle, triangle, or square.');
+            return;
+    }
+
+    const svgContent = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+            ${shapeContent}
+            <text x="50%" y="50%" text-anchor="middle" fill="white">${text}</text>
+        </svg>`;
+
     fs.writeFileSync('logo.svg', svgContent);
     console.log('Logo generated and saved as logo.svg');
 }
